@@ -1,46 +1,68 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
+import { connect } from 'react-redux';
+import { getObjectData } from '../../actions/CommonAction';
+import Row from '../Row';
+import RowHead from '../RowHead';
+import { TASK } from '../../shared/Resource';
 
-function TaskList(props) {
-    return (
-        <>
-            <Alert variant='info'>Task List</Alert>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th onClick={() => props.handleTaskSort('id')}>Id</th>
-                        <th onClick={() => props.handleTaskSort('task_name')}>Task Name</th>
-                        <th onClick={() => props.handleTaskSort('start_date')}>Start Date</th>
-                        <th onClick={() => props.handleTaskSort('end_date')}>End Date</th>
-                        <th onClick={() => props.handleTaskSort('priority')}>Priority</th>
-                        <th onClick={() => props.handleTaskSort('status')}>Status</th>
-                        <th onClick={() => props.handleTaskSort('user_id')}>User Id</th>
-                        <th onClick={() => props.handleTaskSort('project_id')}>Project Id</th>
-                        <th onClick={() => props.handleTaskSort('parent_id')}>Parent Id</th>
-                        <th>Update</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {props.data.map((r) => <tr key={r.id}>
-                        <td>{r.id}</td>
-                        <td>{r.task_name}</td>
-                        <td>{r.start_date}</td>
-                        <td>{r.end_date}</td>
-                        <td>{r.priority}</td>
-                        <td>{r.status}</td>
-                        <td>{r.user_id}</td>
-                        <td>{r.project_id}</td>
-                        <td>{r.parent_id}</td>
-                        <td><Button variant="info" type="button" onClick={() => props.handleTaskUpdate(r)}>Update</Button></td>
-                        <td><Button variant="danger" type="button" onClick={() => props.handleTaskDelete(r.id)}>Delete</Button></td>
-                    </tr>)}
-                </tbody>
-            </Table>
-        </>
-    )
+const taskHeader = [
+    { key: 'id', value: 'Id' },
+    { key: 'task_name', value: 'task_name' },
+    { key: 'start_date', value: 'Statrt Date' },
+    { key: 'end_date', value: 'End Date' },
+    { key: 'priority', value: 'Priority' },
+    { key: 'status', value: 'Status' },
+    { key: 'user_id', value: 'User Id' },
+    { key: 'task_id', value: 'Project Id' },
+    { key: 'parent_id', value: 'Parent Id' }
+];
+
+const taskKey = [
+    'id',
+    'task_name',
+    'start_date',
+    'end_date',
+    'priority',
+    'status',
+    'user_id',
+    'task_id',
+    'parent_id'
+];
+
+class TaskList extends React.Component {
+
+    componentDidMount() {
+        this.props.getObjectData(TASK);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.task.message === '' && this.props.task.message !== prevProps.task.message) {
+            console.log('Data updated ....');
+            this.props.getObjectData(TASK);
+        }
+    }
+
+    render() {
+        return (
+            <>
+                <Alert variant='info'>Task List</Alert>
+                <Table striped bordered hover>
+                    <thead>
+                        <RowHead headers={taskHeader} type={TASK} />
+                    </thead>
+                    <tbody>
+                        {this.props.task.data.map(r => <Row key={r.id} data={r} objectKey={taskKey} type={TASK} />)}
+                    </tbody>
+                </Table>
+            </>
+        );
+    }
 }
 
-export default TaskList;
+function mapStateToProps(state) {
+    return { task: state.TaskReducer };
+}
+
+export default connect(mapStateToProps, { getObjectData })(TaskList);

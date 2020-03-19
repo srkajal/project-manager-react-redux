@@ -1,0 +1,15 @@
+export const BASE_URL = 'http://localhost:5000';
+export const API_URL = '/api/';
+export const TASK_API = '/api/task';
+export const USER_API = '/api/user';
+export const PROJECT_API = '/api/project';
+export const PARENT_API = '/api/parent';
+export const POST = 'POST';
+export const PUT = 'PUT';
+export const DELETE = 'DELETE';
+export const CONTENT_HEADER_TYPE = 'Content_Type';
+export const CONTENT_HEADER_VALUE = 'application/json';
+export const USER = 'USER';
+export const PROJECT = 'PROJECT';
+export const TASK = 'TASK';
+export const PARENT = 'PARENT';

@@ -1,34 +1,53 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
+import { connect } from 'react-redux';
+import {getObjectData} from '../../actions/CommonAction';
+import Row from '../Row';
+import RowHead from '../RowHead';
+import { USER } from '../../shared/Resource';
 
-function UserList(props) {
-    return <>
-        <Alert variant='info'>Users List</Alert>
-        <Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th onClick={() => props.handleUserSort('id')} >Id</th>
-                    <th onClick={() => props.handleUserSort('first_name')}>First Name</th>
-                    <th onClick={() => props.handleUserSort('last_name')}>Last Name</th>
-                    <th onClick={() => props.handleUserSort('employee_id')}>Employee Id</th>
-                    <th>Update</th>
-                    <th>Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-                {props.data.map((r, index) => <tr key={index}>
-                    <td>{r.id}</td>
-                    <td>{r.first_name}</td>
-                    <td>{r.last_name}</td>
-                    <td>{r.employee_id}</td>
-                    <td><Button variant="info" type="button" onClick={() => props.handleUserUpdate(r)}>Update</Button></td>
-                    <td><Button variant="danger" type="button" onClick={() => props.handleUserDelete(r.id)}>Delete</Button></td>
-                </tr>)}
-            </tbody>
-        </Table>
-    </>
+const userHeader = [
+    { key: 'id', value: 'Id' },
+    { key: 'first_name', value: 'First Name' },
+    { key: 'last_name', value: 'Last Name' },
+    { key: 'employee_id', value: 'Employee Id' }];
+
+const userKey = ['id', 'first_name', 'last_name', 'employee_id'];
+
+class UserList extends React.Component {
+    componentDidMount() {
+        this.props.getObjectData(USER);
+    }
+
+    componentDidUpdate(prevProps) {
+        //console.log('Current Props List:', this.props.user.message);
+        //console.log('Prev Props List:', prevProps.user.message);
+
+        if (prevProps.user.message === '' && this.props.user.message !== prevProps.user.message) {
+            console.log('Data updated ....');
+            this.props.getObjectData(USER);
+        }
+    }
+
+    render() {
+        return (<>
+            <Alert variant='info'>Users List</Alert>
+            <Table striped bordered hover>
+                <thead>
+                    <RowHead headers={userHeader} type={USER} />
+                </thead>
+                <tbody>
+                    {this.props.user.data.map(r => <Row key={r.id} data={r} objectKey={userKey} type={USER} />)}
+                </tbody>
+            </Table>
+        </>);
+    }
+
 }
 
-export default UserList;
+function mapStateToProps(state) {
+    return { user: state.UserReducer };
+}
+
+export default connect(mapStateToProps, { getObjectData })(UserList);

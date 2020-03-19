@@ -1,29 +1,32 @@
 import React from 'react';
 import CreateProject from './CreateProject';
 import ProjectList from './ProjectList';
+import {connect} from 'react-redux';
+import {getObjectData} from '../../actions/CommonAction';
+import {USER} from '../../shared/Resource';
 
 class Project extends React.Component {
+    componentDidMount(){
+        this.props.getObjectData(USER);
+    }
+
     render() {
 
-        if(!this.props.project.isLoaded){
+        /* if(!this.props.project.isLoaded){
             return <h1>Loading......</h1>
-        }
+        } */
         return (
             <>
-                <ProjectList data={this.props.project.data} 
-                handleProjectUpdate={this.props.handleProjectUpdate} 
-                handleProjectDelete={this.props.handleProjectDelete} 
-                handleProjectSort={this.props.handleProjectSort} />
+                <ProjectList />
                 <hr />
-                <CreateProject 
-                handleProjectChange={this.props.handleProjectChange} 
-                handleProjectSubmit={this.props.handleProjectSubmit} 
-                project={this.props.project}
-                users={this.props.users}
-                handleReset={this.props.handleReset} />
+                <CreateProject user={this.props.user}/>
             </>
         );
     }
 }
 
-export default Project;
+function mapStateToProps(state) {
+    return {user: state.UserReducer.data};
+}
+
+export default connect(mapStateToProps, {getObjectData})(Project);
